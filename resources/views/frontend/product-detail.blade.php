@@ -9,7 +9,7 @@
 <body class="bg-gray-100">
 
     <div class="container mx-auto py-10">
-        <a href="{{ route('products.index') }}" class="text-blue-500 mb-5 inline-block">&larr; Kembali</a>
+        <a href="{{ route('login') }}" class="text-blue-500 mb-5 inline-block">&larr; Kembali</a>
 
         <div class="bg-white shadow rounded-lg p-6">
             <div class="flex flex-col md:flex-row gap-6">

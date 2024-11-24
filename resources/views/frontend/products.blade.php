@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
 </head>
 <body class="bg-gray-100">
+    <a href="/login" class="bg-blue-500 text-white py-2 px-4 rounded-md">Login</a>
 
     <div class="container mx-auto py-10">
         <h1 class="text-3xl font-bold text-center mb-10">Daftar Produk</h1>
