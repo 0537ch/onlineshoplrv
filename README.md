@@ -107,11 +107,11 @@ php artisan serve
 
 ### Admin
 - Email: admin@example.com
-- Password: password
+- Password: admin123
 
 ### Customer
-- Email: customer@example.com
-- Password: password
+- Email: user@example.com
+- Password: user123
 
 ## Pengembangan
 
