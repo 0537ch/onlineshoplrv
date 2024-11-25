@@ -44,6 +44,14 @@ class User extends Authenticatable implements FilamentUser
     }
 
     /**
+     * Get all orders for the user.
+     */
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    /**
      * The attributes that should be hidden for serialization.
      *
      * @var array<int, string>

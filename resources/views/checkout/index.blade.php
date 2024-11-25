@@ -26,15 +26,15 @@
                                     <div class="flex justify-between items-center">
                                         <div>
                                             <h4 class="font-medium">{{ $product->name }}</h4>
-                                            <p class="text-sm text-gray-600">{{ $item['quantity'] }} x ${{ number_format($item['price'], 2) }}</p>
+                                            <p class="text-sm text-gray-600">{{ $item['quantity'] }} x Rp {{ number_format($item['price'], 0, ',', '.') }}</p>
                                         </div>
-                                        <p class="font-medium">${{ number_format($subtotal, 2) }}</p>
+                                        <p class="font-medium">Rp {{ number_format($subtotal, 0, ',', '.') }}</p>
                                     </div>
                                 @endforeach
                                 <div class="border-t pt-4 mt-4">
                                     <div class="flex justify-between items-center font-semibold">
                                         <p>Total</p>
-                                        <p>${{ number_format($total, 2) }}</p>
+                                        <p>Rp {{ number_format($total, 0, ',', '.') }}</p>
                                     </div>
                                 </div>
                             </div>

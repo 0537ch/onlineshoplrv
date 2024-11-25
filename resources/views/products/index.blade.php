@@ -62,10 +62,10 @@
                             </h3>
 
                             <div class="flex items-center space-x-2">
-                                <span class="text-lg font-semibold text-gray-900">${{ number_format($product->price, 2) }}</span>
+                                <span class="text-lg font-semibold text-gray-900">Rp {{ number_format($product->price, 0, ',', '.') }}</span>
                                 @if($product->discount > 0)
                                     <span class="text-sm text-red-600 line-through">
-                                        ${{ number_format($product->price * (1 + $product->discount/100), 2) }}
+                                        Rp {{ number_format($product->price * (1 + $product->discount/100), 0, ',', '.') }}
                                     </span>
                                 @endif
                             </div>

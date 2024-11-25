@@ -10,10 +10,20 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        User::create([
+        // Create admin user
+        $admin = User::create([
+            'name' => 'Admin User',
+            'email' => 'admin@example.com',
+            'password' => Hash::make('admin123'),
+        ]);
+        $admin->assignRole('admin');
+
+        // Create regular customer
+        $customer = User::create([
             'name' => 'Regular User',
             'email' => 'user@example.com',
-            'password' => Hash::make('user'),
+            'password' => Hash::make('user123'),
         ]);
+        $customer->assignRole('customer');
     }
 }

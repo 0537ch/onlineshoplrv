@@ -19,7 +19,7 @@
                                         @endif
                                         <div>
                                             <h3 class="font-semibold">{{ $item['product']->name }}</h3>
-                                            <p class="text-gray-600">Price: ${{ number_format($item['price'], 2) }}</p>
+                                            <p class="text-gray-600">Harga: Rp {{ number_format($item['price'], 0, ',', '.') }}</p>
                                         </div>
                                     </div>
                                     <div class="flex items-center space-x-4">
@@ -41,7 +41,7 @@
 
                             <div class="mt-6 flex justify-between items-center">
                                 <div class="text-xl font-semibold">
-                                    Total: ${{ number_format($total, 2) }}
+                                    Total: Rp {{ number_format($total, 0, ',', '.') }}
                                 </div>
                                 <div class="space-x-4">
                                     <form action="{{ route('cart.clear') }}" method="POST" class="inline">

@@ -4,84 +4,54 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\OrderResource\Pages;
 use App\Models\Order;
+use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Forms\Components\Card;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\Placeholder;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Actions\Action;
+use Filament\Notifications\Notification;
 
 class OrderResource extends Resource
 {
     protected static ?string $model = Order::class;
-    protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
-    protected static ?string $navigationGroup = 'Shop';
-    protected static ?int $navigationSort = 3;
+
+    protected static ?string $navigationIcon = 'heroicon-o-shopping-bag';
+    
+    protected static ?string $navigationLabel = 'Pesanan';
+    
+    protected static ?string $modelLabel = 'Pesanan';
+    
+    protected static ?string $pluralModelLabel = 'Pesanan';
 
     public static function form(Form $form): Form
     {
-        return $form->schema([
-            Card::make()
-                ->schema([
-                    TextInput::make('order_number')
-                        ->required()
-                        ->maxLength(255)
-                        ->disabled(),
-                    Select::make('user_id')
-                        ->relationship('user', 'name')
-                        ->required()
-                        ->searchable(),
-                    TextInput::make('total_amount')
-                        ->required()
-                        ->numeric()
-                        ->prefix('$')
-                        ->disabled(),
-                    Select::make('status')
-                        ->options([
-                            'pending' => 'Pending',
-                            'processing' => 'Processing',
-                            'completed' => 'Completed',
-                            'cancelled' => 'Cancelled',
-                        ])
-                        ->required()
-                        ->default('pending'),
-                    TextInput::make('shipping_address')
-                        ->required()
-                        ->maxLength(255),
-                    TextInput::make('shipping_city')
-                        ->required()
-                        ->maxLength(255),
-                    TextInput::make('shipping_postal_code')
-                        ->required()
-                        ->maxLength(255),
-                    TextInput::make('shipping_phone')
-                        ->required()
-                        ->tel()
-                        ->maxLength(255),
-                    Textarea::make('notes')
-                        ->maxLength(65535)
-                        ->columnSpanFull(),
-                ])
-                ->columns(2),
-
-            Card::make()
-                ->schema([
-                    Placeholder::make('Order Items')
-                        ->content(function (Order $record): string {
-                            $items = $record->items()->with('product')->get();
-                            $content = '';
-                            foreach ($items as $item) {
-                                $content .= "• {$item->product->name} - Qty: {$item->quantity} - Price: \${$item->price}\n";
-                            }
-                            return $content;
-                        })
-                ])
-        ]);
+        return $form
+            ->schema([
+                Forms\Components\Select::make('status')
+                    ->options([
+                        Order::STATUS_PENDING => 'Menunggu Pembayaran',
+                        Order::STATUS_PROCESSING => 'Pesanan Diproses',
+                        Order::STATUS_SHIPPED => 'Dalam Pengiriman',
+                        Order::STATUS_DELIVERED => 'Pesanan Diterima',
+                        Order::STATUS_CANCELLED => 'Dibatalkan'
+                    ])
+                    ->required(),
+                Forms\Components\TextInput::make('shipping_address')
+                    ->label('Alamat Pengiriman')
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('shipping_phone')
+                    ->label('No. Telepon')
+                    ->tel()
+                    ->required(),
+                Forms\Components\Textarea::make('notes')
+                    ->label('Catatan')
+                    ->maxLength(65535)
+                    ->columnSpanFull(),
+            ]);
     }
 
     public static function table(Table $table): Table
@@ -89,40 +59,104 @@ class OrderResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('order_number')
-                    ->searchable()
-                    ->sortable(),
+                    ->label('No. Pesanan')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('user.name')
-                    ->searchable()
-                    ->sortable(),
+                    ->label('Pelanggan')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('total_amount')
-                    ->money()
+                    ->label('Total')
+                    ->money('IDR')
                     ->sortable(),
-                Tables\Columns\BadgeColumn::make('status')
-                    ->colors([
-                        'warning' => 'pending',
-                        'primary' => 'processing',
-                        'success' => 'completed',
-                        'danger' => 'cancelled',
-                    ]),
+                Tables\Columns\TextColumn::make('status')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'pending' => 'warning',
+                        'processing' => 'info',
+                        'shipped' => 'primary',
+                        'delivered' => 'success',
+                        'cancelled' => 'danger',
+                    })
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'pending' => 'Menunggu Pembayaran',
+                        'processing' => 'Pesanan Diproses',
+                        'shipped' => 'Dalam Pengiriman',
+                        'delivered' => 'Pesanan Diterima',
+                        'cancelled' => 'Dibatalkan',
+                    }),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+                    ->label('Tanggal Pesanan')
+                    ->dateTime('d M Y H:i')
                     ->sortable(),
             ])
+            ->defaultSort('created_at', 'desc')
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
                     ->options([
-                        'pending' => 'Pending',
-                        'processing' => 'Processing',
-                        'completed' => 'Completed',
-                        'cancelled' => 'Cancelled',
-                    ]),
+                        Order::STATUS_PENDING => 'Menunggu Pembayaran',
+                        Order::STATUS_PROCESSING => 'Pesanan Diproses',
+                        Order::STATUS_SHIPPED => 'Dalam Pengiriman',
+                        Order::STATUS_DELIVERED => 'Pesanan Diterima',
+                        Order::STATUS_CANCELLED => 'Dibatalkan'
+                    ])
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Action::make('process')
+                    ->label('Proses')
+                    ->icon('heroicon-o-arrow-path')
+                    ->color('info')
+                    ->visible(fn (Order $record): bool => $record->status === Order::STATUS_PENDING)
+                    ->action(function (Order $record): void {
+                        $record->update(['status' => Order::STATUS_PROCESSING]);
+                        Notification::make()
+                            ->title('Pesanan diproses')
+                            ->success()
+                            ->send();
+                    }),
+                Action::make('ship')
+                    ->label('Kirim')
+                    ->icon('heroicon-o-truck')
+                    ->color('primary')
+                    ->visible(fn (Order $record): bool => $record->status === Order::STATUS_PROCESSING)
+                    ->action(function (Order $record): void {
+                        $record->update(['status' => Order::STATUS_SHIPPED]);
+                        Notification::make()
+                            ->title('Pesanan dikirim')
+                            ->success()
+                            ->send();
+                    }),
+                Action::make('deliver')
+                    ->label('Selesai')
+                    ->icon('heroicon-o-check-circle')
+                    ->color('success')
+                    ->visible(fn (Order $record): bool => $record->status === Order::STATUS_SHIPPED)
+                    ->action(function (Order $record): void {
+                        $record->update(['status' => Order::STATUS_DELIVERED]);
+                        Notification::make()
+                            ->title('Pesanan selesai')
+                            ->success()
+                            ->send();
+                    }),
+                Action::make('cancel')
+                    ->label('Batalkan')
+                    ->icon('heroicon-o-x-circle')
+                    ->color('danger')
+                    ->visible(fn (Order $record): bool => in_array($record->status, [Order::STATUS_PENDING, Order::STATUS_PROCESSING]))
+                    ->requiresConfirmation()
+                    ->action(function (Order $record): void {
+                        $record->update(['status' => Order::STATUS_CANCELLED]);
+                        Notification::make()
+                            ->title('Pesanan dibatalkan')
+                            ->success()
+                            ->send();
+                    }),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                ]),
             ]);
     }
 
@@ -139,12 +173,6 @@ class OrderResource extends Resource
             'index' => Pages\ListOrders::route('/'),
             'create' => Pages\CreateOrder::route('/create'),
             'edit' => Pages\EditOrder::route('/{record}/edit'),
-            'view' => Pages\ViewOrder::route('/{record}'),
         ];
-    }
-
-    public static function getEloquentQuery(): Builder
-    {
-        return parent::getEloquentQuery()->latest();
     }
 }

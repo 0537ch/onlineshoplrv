@@ -9,16 +9,34 @@ class Order extends Model
 {
     use HasFactory;
 
+    const STATUS_PENDING = 'pending';
+    const STATUS_PROCESSING = 'processing';
+    const STATUS_SHIPPED = 'shipped';
+    const STATUS_DELIVERED = 'delivered';
+    const STATUS_CANCELLED = 'cancelled';
+
+    public static function getStatuses()
+    {
+        return [
+            self::STATUS_PENDING => 'Menunggu Pembayaran',
+            self::STATUS_PROCESSING => 'Pesanan Diproses',
+            self::STATUS_SHIPPED => 'Dalam Pengiriman',
+            self::STATUS_DELIVERED => 'Pesanan Diterima',
+            self::STATUS_CANCELLED => 'Dibatalkan'
+        ];
+    }
+
     protected $fillable = [
         'user_id',
         'order_number',
-        'total_amount',
         'status',
+        'total_amount',
         'shipping_address',
         'shipping_city',
         'shipping_postal_code',
         'shipping_phone',
         'notes',
+        'payment_status'
     ];
 
     public function user()

@@ -19,6 +19,9 @@
                         <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                             {{ __('Dashboard') }}
                         </x-nav-link>
+                        <x-nav-link :href="route('orders.index')" :active="request()->routeIs('orders.index')">
+                            {{ __('Pesanan Saya') }}
+                        </x-nav-link>
                         <x-nav-link :href="route('cart.show')" :active="request()->routeIs('cart.show')">
                             <div class="flex items-center">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -100,6 +103,9 @@
             @auth
                 <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                     {{ __('Dashboard') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('orders.index')" :active="request()->routeIs('orders.index')">
+                    {{ __('Pesanan Saya') }}
                 </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('cart.show')" :active="request()->routeIs('cart.show')">
                     <div class="flex items-center">
