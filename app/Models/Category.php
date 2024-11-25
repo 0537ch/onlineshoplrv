@@ -10,7 +10,7 @@ class Category extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name', // Atribut yang bisa diisi secara massal
+        'name', 'slug', 'image', 'is_active'
     ];
 
     public function products()

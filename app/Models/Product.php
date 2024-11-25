@@ -10,20 +10,33 @@ class Product extends Model
     use HasFactory;
 
     protected $fillable = [
+        'category_id',
+        'brand_id',
         'name',
+        'slug',
+        'images',
         'description',
         'price',
-        'stock',
-        'category_id'
+        'is_active',
+        'is_featured',
+        'in_stock',
+        'on_sale',
+    ];
+    protected $casts = [
+        'images' => 'array',
     ];
 
     public function category()
     {
         return $this->belongsTo(Category::class); // Produk ini milik satu kategori
     }
-
-    public function orders()
+    public function brand()
     {
-        return $this->belongsToMany(Order::class, 'order_product')->withPivot('quantity'); // Produk bisa ada di banyak pesanan
+        return $this->belongsTo(Brand::class); // Produk ini milik satu brand
+    }
+
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItem::class); // Satu produk memiliki banyak order item
     }
 }

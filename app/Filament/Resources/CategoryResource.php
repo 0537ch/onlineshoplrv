@@ -1,13 +1,26 @@
 <?php
+
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\CategoryResource\Pages;
+use App\Filament\Resources\CategoryResource\RelationManagers;
 use App\Models\Category;
+use Doctrine\DBAL\Schema\Schema;
 use Filament\Forms;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Grid;
 use Filament\Forms\Form;
+use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Filament\Resources\Resource;
-use App\Filament\Resources\CategoryResource\Pages; // Pastikan namespace ini ada
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\FormsComponent;
+use Illuminate\Support\Str;
+
 
 class CategoryResource extends Resource
 {
@@ -19,9 +32,38 @@ class CategoryResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
+                Section::make('Category Details')
+                    ->schema([
+                        Grid::make()
+                            ->schema([
+                                TextInput::make('name')
+                                    ->label('Name')
+                                    ->required()
+                                    ->live()
+                                    ->afterStateUpdated(fn ($state, callable $set) => $set('slug', Str::slug($state))),
+
+                                
+                                    TextInput::make('slug')
+                                    ->label('Slug')
+                                    ->required()
+                                    ->disabled()
+                                    ->dehydrated(true) // Memastikan nilai tetap dikirim ke backend
+                                    ->unique(Category::class, 'slug', ignoreRecord: true),
+                                
+                            ]),
+                            Forms\Components\FileUpload::make('image')
+                            ->label('Image')
+                            ->image() // Memastikan hanya menerima file gambar
+                            ->directory('categories') // Direktori penyimpanan
+                            
+                            
+                            
+                        ,
+                        Toggle::make('is_active')
+                            ->label('Active')
+                            ->required()
+                            ->default(true),
+                    ]),
             ]);
     }
 
@@ -29,13 +71,40 @@ class CategoryResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id')->sortable(),
-                Tables\Columns\TextColumn::make('name')->sortable()->searchable(),
-                Tables\Columns\TextColumn::make('created_at')->dateTime(),
+                Tables\Columns\TextColumn::make('name')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('slug')
+                    ->searchable(),
+                Tables\Columns\ImageColumn::make('image'),
+                Tables\Columns\IconColumn::make('is_active')
+                    ->boolean(),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
+            ])
+            ->actions([
+                Tables\Actions\EditAction::make(),
+            ])
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                ]),
             ]);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
     }
 
     public static function getPages(): array

@@ -8,6 +8,9 @@ use App\Models\Product;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\CheckoutController;
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth'])
@@ -21,17 +24,9 @@ Route::post('/logout', [LoginController::class, 'destroy'])->middleware('auth')-
 Route::get('/register', [RegisterController::class, 'create'])->middleware('guest')->name('register');
 Route::post('/register', [RegisterController::class, 'store'])->middleware('guest');
 
-Route::get('/', function () {
-    $products = Product::all();
-    return view('frontend.products', compact('products'));
-})->name('products.index');
-
-Route::get('/product/{id}', function ($id) {
-    $product = Product::findOrFail($id);
-    return view('frontend.product-detail', compact('product'));
-})->name('products.detail');
-
-
+// Product routes
+Route::get('/', [ProductController::class, 'index'])->name('products.index');
+Route::get('/product/{id}', [ProductController::class, 'detail'])->name('products.detail');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -44,5 +39,18 @@ Route::group(['middleware' => ['role:product_manager|sales_staff']], function ()
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
 });
 
+// Cart Routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('/cart', [CartController::class, 'show'])->name('cart.show');
+    Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
+    Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update');
+    Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
+    Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+    Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+});
 
 require __DIR__.'/auth.php';

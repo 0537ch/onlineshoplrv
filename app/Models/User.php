@@ -9,12 +9,13 @@ use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasRoles;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -24,13 +25,23 @@ class User extends Authenticatable implements FilamentUser
     protected $fillable = [
         'name',
         'email',
+        'email_verified_at',
         'password',
         'role',
     ];
+
     public function canAccessPanel(Panel $panel): bool
-{
-    return $this->role === 'admin'; // Only allow users with the role 'admin'
-}
+    {
+        return $this->role === 'admin'; // Only allow users with the role 'admin'
+    }
+
+    /**
+     * Get the user's cart.
+     */
+    public function cart()
+    {
+        return $this->hasOne(Cart::class);
+    }
 
     /**
      * The attributes that should be hidden for serialization.

@@ -10,18 +10,40 @@ class Order extends Model
     use HasFactory;
 
     protected $fillable = [
-        'customer_id',
-        'total_price',
-        'status'
+        'user_id',
+        'order_number',
+        'total_amount',
+        'status',
+        'shipping_address',
+        'shipping_city',
+        'shipping_postal_code',
+        'shipping_phone',
+        'notes',
     ];
 
-    public function customer()
+    public function user()
     {
-        return $this->belongsTo(Customer::class); // Pesanan ini milik satu pelanggan
+        return $this->belongsTo(User::class);
     }
 
-    public function products()
+    public function items()
     {
-        return $this->belongsToMany(Product::class, 'order_product')->withPivot('quantity'); // Pesanan bisa memiliki banyak produk
+        return $this->hasMany(OrderItem::class);
+    }
+
+    public static function generateOrderNumber()
+    {
+        $prefix = 'ORD';
+        $date = now()->format('Ymd');
+        $lastOrder = self::whereDate('created_at', today())->latest()->first();
+        
+        if ($lastOrder) {
+            $lastNumber = intval(substr($lastOrder->order_number, -4));
+            $newNumber = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
+        } else {
+            $newNumber = '0001';
+        }
+        
+        return $prefix . $date . $newNumber;
     }
 }

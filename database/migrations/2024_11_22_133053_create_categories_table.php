@@ -13,7 +13,10 @@ return new class extends Migration
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique(); // Nama kategori unik
+            $table->string('name'); // Nama kategori unik
+            $table->string('slug')->unique(); // Slug kategori unik
+            $table->string('image')->nullable(); // Nama file gambar kategori
+            $table->boolean('is_active')->default(true); // Status kategori
             $table->timestamps();
         });
     }

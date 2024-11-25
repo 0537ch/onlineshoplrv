@@ -19,20 +19,43 @@ class ProductResource extends Resource
     {
         return $form
             ->schema([
+                Forms\Components\Select::make('category_id')
+                    ->relationship('category', 'name')
+                    ->required()
+                    ->label('Category'),
+                Forms\Components\Select::make('brand_id')
+                    ->relationship('brand', 'name')
+                    ->required()
+                    ->label('Brand'),
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\Textarea::make('description')
-                    ->maxLength(65535),
+                Forms\Components\TextInput::make('slug')
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\FileUpload::make('images')
+                    ->multiple()
+                    ->directory('products')
+                    ->image(),
+                Forms\Components\RichEditor::make('description')
+                    ->maxLength(65535)
+                    ->columnSpanFull(),
                 Forms\Components\TextInput::make('price')
                     ->numeric()
-                    ->required(),
-                Forms\Components\TextInput::make('stock')
+                    ->required()
+                    ->prefix('Rp'),
+                Forms\Components\Toggle::make('is_active')
+                    ->label('Active')
+                    ->default(true),
+                Forms\Components\Toggle::make('is_featured')
+                    ->label('Featured'),
+                Forms\Components\TextInput::make('in_stock')
                     ->numeric()
-                    ->required(),
-                Forms\Components\Select::make('category_id')
-                    ->relationship('category', 'name')
-                    ->required(),
+                    ->required()
+                    ->default(0)
+                    ->label('Stock'),
+                Forms\Components\Toggle::make('on_sale')
+                    ->label('On Sale'),
             ]);
     }
 
@@ -40,12 +63,38 @@ class ProductResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id')->sortable(),
-                Tables\Columns\TextColumn::make('name')->sortable()->searchable(),
-                Tables\Columns\TextColumn::make('price')->sortable(),
-                Tables\Columns\TextColumn::make('stock')->sortable(),
-                Tables\Columns\TextColumn::make('category.name')->label('Category'),
-                Tables\Columns\TextColumn::make('created_at')->dateTime(),
+                Tables\Columns\TextColumn::make('id')
+                    ->sortable(),
+                Tables\Columns\ImageColumn::make('images')
+                    ->circular()
+                    ->stacked()
+                    ->limit(3),
+                Tables\Columns\TextColumn::make('name')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('category.name')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('brand.name')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('price')
+                    ->money('idr')
+                    ->sortable(),
+                Tables\Columns\IconColumn::make('is_active')
+                    ->boolean()
+                    ->sortable(),
+                Tables\Columns\IconColumn::make('is_featured')
+                    ->boolean()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('in_stock')
+                    ->sortable(),
+                Tables\Columns\IconColumn::make('on_sale')
+                    ->boolean()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable(),
             ])
             ->filters([
                 //
@@ -53,11 +102,11 @@ class ProductResource extends Resource
     }
 
     public static function getPages(): array
-{
-    return [
-        'index' => Pages\ListProducts::route('/'),
-        'create' => Pages\CreateProduct::route('/create'),
-        'edit' => Pages\EditProduct::route('/{record}/edit'),
-    ];
-}
+    {
+        return [
+            'index' => Pages\ListProducts::route('/'),
+            'create' => Pages\CreateProduct::route('/create'),
+            'edit' => Pages\EditProduct::route('/{record}/edit'),
+        ];
+    }
 }

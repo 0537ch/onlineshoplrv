@@ -2,8 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -13,11 +11,37 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        // Menjalankan RolePermissionSeeder terlebih dahulu
+        $this->call([
+            RolePermissionSeeder::class,
+            CategorySeeder::class,
+            BrandSeeder::class,
+            ProductSeeder::class,
+            UserSeeder::class,
         ]);
+
+        // Membuat user dengan factory
+        $adminUser = \App\Models\User::factory()->create([
+            'name' => 'Admin User',
+            'email' => 'admin@example.net',
+            'password' => bcrypt('admin'), // Pastikan password aman
+        ]);
+
+        $productManagerUser = \App\Models\User::factory()->create([
+            'name' => 'Product Manager',
+            'email' => 'manager@example.com',
+            'password' => bcrypt('password'),
+        ]);
+
+        $salesStaffUser = \App\Models\User::factory()->create([
+            'name' => 'Sales Staff',
+            'email' => 'sales@example.net',
+            'password' => bcrypt('sales'),
+        ]);
+
+        // Assign roles untuk setiap user
+        $adminUser->assignRole('admin');
+        $productManagerUser->assignRole('product_manager');
+        $salesStaffUser->assignRole('sales_staff');
     }
 }

@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('brands', function (Blueprint $table) {
             $table->id();
+            $table->string('name'); // Nama brand unik
+            $table->string('slug')->unique(); // Slug brand unik
+            $table->string('image')->nullable(); // Nama file gambar brand
+            $table->boolean('is_active')->default(true); // Status brand
             $table->timestamps();
         });
     }
