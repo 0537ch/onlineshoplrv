@@ -41,7 +41,7 @@ Aplikasi E-Commerce berbasis Laravel 11 dengan fitur lengkap untuk pengelolaan t
 
 1. Clone repository
 ```bash
-git clone https://github.com/username/onlineshop.git
+git clone https://github.com/0537.ch/onlineshoplrv.git
 cd onlineshop
 ```
 
