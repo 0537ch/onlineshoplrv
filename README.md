@@ -1,135 +1,119 @@
-# Laravel E-Commerce Application
+# Laravel E-commerce Platform
 
-Aplikasi E-Commerce berbasis Laravel 11 dengan fitur lengkap untuk pengelolaan toko online. Dilengkapi dengan panel admin menggunakan Filament dan sistem tracking pesanan untuk pelanggan.
+A modern e-commerce platform built with Laravel 11, featuring a responsive frontend and powerful admin dashboard.
 
-## Fitur Utama
+## Features
 
-### Customer Side
-- Autentikasi pengguna dengan Laravel Breeze
-- Katalog produk dengan pencarian dan filter
-- Keranjang belanja
-- Checkout pesanan
-- Tracking status pesanan
-- Riwayat pesanan
+- 🛍️ **Product Management**
+  - Product categories and brands
+  - Product variants and SKUs
+  - Inventory tracking
+  - Discount management
 
-### Admin Panel (Filament)
-- Dashboard admin
-- Manajemen produk
-- Manajemen pesanan dengan status tracking
-- Manajemen pengguna
-- Role dan permission management
+- 🛒 **Shopping Experience**
+  - User-friendly cart system
+  - Wishlist functionality
+  - Coupon system
+  - Streamlined checkout process
 
-## Teknologi
+- 👤 **User Management**
+  - Secure authentication with Laravel Fortify
+  - Role-based access control
+  - Customer profiles
+  - Address management
 
-- PHP 8.2.22
-- Laravel 11.33.2
-- MySQL
-- Tailwind CSS
-- Alpine.js
-- Laravel Breeze
-- Filament Admin Panel
-- Spatie Laravel Permission
+- 📊 **Admin Dashboard**
+  - Built with Filament
+  - Sales analytics
+  - Order management
+  - User management
+  - Product catalog management
 
-## Persyaratan Sistem
+## Tech Stack
+
+- **Backend:** Laravel 11
+- **Admin Panel:** Filament 3
+- **Frontend:** 
+  - Blade Templates
+  - Alpine.js
+  - Tailwind CSS
+- **Database:** MySQL
+- **Authentication:** Laravel Fortify
+- **API Authentication:** Laravel Sanctum
+
+## Requirements
 
 - PHP >= 8.2
 - Composer
 - Node.js & NPM
 - MySQL
 
-## Instalasi
+## Installation
 
-1. Clone repository
+1. Clone the repository
 ```bash
-git clone https://github.com/username/onlineshop.git
-cd onlineshop
+git clone https://github.com/0537ch/onlineshoplrv.git
 ```
 
-2. Install dependencies
+2. Install PHP dependencies
 ```bash
 composer install
+```
+
+3. Install NPM dependencies
+```bash
 npm install
 ```
 
-3. Setup environment
+4. Create environment file
 ```bash
 cp .env.example .env
+```
+
+5. Generate application key
+```bash
 php artisan key:generate
 ```
 
-4. Konfigurasi database di file .env
-```
+6. Configure your database in .env file
+```env
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=onlineshop
-DB_USERNAME=root
-DB_PASSWORD=
+DB_DATABASE=your_database_name
+DB_USERNAME=your_username
+DB_PASSWORD=your_password
 ```
 
-5. Migrate dan seed database
+7. Run migrations and seeders
 ```bash
 php artisan migrate --seed
 ```
 
-6. Compile assets
+8. Build assets
 ```bash
-npm run dev
+npm run build
 ```
 
-7. Jalankan aplikasi
+9. Start the development server
 ```bash
 php artisan serve
 ```
 
-## Struktur Role
+## Usage
 
-1. Admin
-   - Akses penuh ke panel admin
-   - Manajemen produk dan pesanan
-   - Manajemen pengguna
+- **Customer Interface:** Access the shop at `http://localhost:8000`
+- **Admin Dashboard:** Access admin panel at `http://localhost:8000/admin`
+  - Default admin credentials:
+    - Email: admin@example.com
+    - Password: password
 
-2. Customer
-   - Melihat katalog produk
-   - Melakukan pembelian
-   - Tracking pesanan
-   - Melihat riwayat pesanan
+## Security
 
-## Alur Pesanan
+- CSRF Protection
+- XSS Prevention
+- SQL Injection Protection
+- Role-based Access Control
+- Secure Password Hashing
 
-1. Menunggu Pembayaran (PENDING)
-2. Pesanan Diproses (PROCESSING)
-3. Dalam Pengiriman (SHIPPED)
-4. Pesanan Diterima (DELIVERED)
-5. Dibatalkan (CANCELLED)
 
-## Akun Default
-
-### Admin
-- Email: admin@example.com
-- Password: password
-
-### Customer
-- Email: customer@example.com
-- Password: password
-
-## Pengembangan
-
-Aplikasi ini dikembangkan menggunakan:
-- Laravel 11 sebagai framework backend
-- Tailwind CSS untuk styling
-- Alpine.js untuk interaktivitas frontend
-- Filament untuk panel admin
-- Spatie Laravel Permission untuk manajemen role
-
-## Lisensi
-
-[MIT License](LICENSE.md)
-
-## Kontribusi
-
-Silakan buat pull request untuk kontribusi.
-
-## Kontak
-
-Jika ada pertanyaan, silakan hubungi [email Anda].
