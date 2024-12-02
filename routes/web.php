@@ -11,6 +11,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\TestController;
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth'])
@@ -50,6 +51,15 @@ Route::middleware(['auth'])->group(function () {
     // Checkout routes
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+});
+
+// Security Test Routes (REMOVE IN PRODUCTION!)
+Route::prefix('test')->name('test.')->group(function () {
+    Route::get('/search', [TestController::class, 'searchVulnerable'])->name('search');
+    Route::get('/user-search', [TestController::class, 'userSearchVulnerable'])->name('user_search');
+    Route::match(['get', 'post'], '/comment', [TestController::class, 'commentVulnerable'])->name('comment');
+    Route::get('/user/{id}', [TestController::class, 'userVulnerable'])->name('user');
+    Route::post('/review', [TestController::class, 'reviewVulnerable'])->name('review');
 });
 
 require __DIR__.'/auth.php';
